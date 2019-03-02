@@ -17,11 +17,11 @@ def Ping(ip,count=3,timeout=3):
         if (percentage):
             percentage = int(percentage.group().rstrip('%'))
             if ( percentage == 0 ):
-                return('Alive')
+                return('\033[32mAlive\033[0m')
             elif ( percentage > 0 and percentage < 100 ):
                 return('PacketDrop')
             else:
-                return('Dead')
+                return('\033[31mDead\033[0m')
 
 if (__name__ == '__main__'):
     parse = argparse.ArgumentParser(description="This script is used to ping the IP and provide the status")
