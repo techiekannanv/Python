@@ -9,7 +9,12 @@ import argparse
 def Ping(ip,count=3,timeout=3):
     process = subprocess.Popen("ping -c "+str(count)+" -W "+str(timeout)+" "+ip,shell=True, stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)
-    output = process.communicate()
+    stdout, stderr = process.communicate()
+    output = []
+    if type(stdout) == type(bytes(1)):
+        output.append(stdout.decode())
+        output.append(stderr.decode())
+
     if (output[1] != ''):
         return("Error:"+output[1].rstrip('\n'))
     for line in output[0].split('\n'):
@@ -17,11 +22,11 @@ def Ping(ip,count=3,timeout=3):
         if (percentage):
             percentage = int(percentage.group().rstrip('%'))
             if ( percentage == 0 ):
-                return('\033[32mAlive\033[0m')
+                return('Alive')
             elif ( percentage > 0 and percentage < 100 ):
                 return('PacketDrop')
             else:
-                return('\033[31mDead\033[0m')
+                return('Dead')
 
 if (__name__ == '__main__'):
     parse = argparse.ArgumentParser(description="This script is used to ping the IP and provide the status")
