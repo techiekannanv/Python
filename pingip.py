@@ -4,11 +4,16 @@ from __future__ import print_function
 import subprocess
 import re
 import argparse
+import sys
 
 
 def Ping(ip,count=3,timeout=3):
-    process = subprocess.Popen("ping -c "+str(count)+" -W "+str(timeout)+" "+ip,shell=True, stdout=subprocess.PIPE,
+    if sys.platform == 'win32':
+        process = subprocess.Popen("ping -n "+str(count)+" -w "+str(timeout)+" "+ip,shell=True, stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)
+    else:
+        process = subprocess.Popen("ping -c " + str(count) + " -W " + str(timeout) + " " + ip, shell=True,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     output = []
     if type(stdout) == type(bytes(1)):
@@ -24,9 +29,11 @@ def Ping(ip,count=3,timeout=3):
             if ( percentage == 0 ):
                 return('Alive')
             elif ( percentage > 0 and percentage < 100 ):
-                return('PacketDrop')
+                percentage = str(percentage)+'%'
+                return(percentage+' PacketDrop')
             else:
                 return('Dead')
+
 
 if (__name__ == '__main__'):
     parse = argparse.ArgumentParser(description="This script is used to ping the IP and provide the status")
@@ -36,6 +43,7 @@ if (__name__ == '__main__'):
     parse.add_argument('-W', action='store', dest='timeout', default=1)
     args = parse.parse_args()
     ips = []
+
     if ( args.file == None and args.ip == None ):
         parse.print_help()
 
