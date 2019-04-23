@@ -98,7 +98,7 @@ class Ssh:
 
 
 if __name__ == "__main__":
-    session = Ssh(pkey='/home/kannan/id_rsa', username='kannan')
+    session = Ssh(password="********", username='kannan')
     # session = Ssh()
     sftp = session.Sftp()
     sftp.put('ssh.log', 'ssh.log')
